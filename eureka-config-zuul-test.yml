@@ -2,4 +2,4 @@ zuul:
   routes:
     testRoutes:
       path: /routeTest/**
-      url: http://www.baidu.com
+      url: http://www.baidu.com/
