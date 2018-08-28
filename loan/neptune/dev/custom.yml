@@ -1,0 +1,92 @@
+# 数据库
+spring:
+  datasource:
+    # 数据库连接
+    url: jdbc:mysql://192.168.31.100/neptune?characterEncoding=utf-8&useSSL=true&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2b8
+    # 数据库用户名
+    username: root
+    # 数据库访问密码
+    password: '{cipher}AQBw2/6Ni9e93URVDiMTuiv0bz47v/jrQw9XbeYD++NuQTnBl92Llqudx9eEGCNyDCqOrAn9EY814Sloq9HsafEhArkOcfvBCTx54h4MVyxPvIO8xVy91aZeLDXXGcEHmvPWQuAZGEZOeEofT6bcgw8SrjANZKhej5Wo38DE0yOLxQVk0thTt0h4/k+UE4HqyZthsqhOS2EkycEAmYWwwKoNQM/pZUxD/CYGQP1XFBPMnzSQSm3qUJnM83o6LJuFyVsPyrwUsLCmvJkcUE99hWMyd4BL7Uup259QTp0nq8I6mbn7Ye+1aSH3IPx/1mY1NrOLhw3w5UnB2qI2+UH6GvqwIHA7GPux4HD7yNwfHUnaFXc/CG+VZ6HAAEnGVoo4VJM='
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 连接类型
+    type: com.alibaba.druid.pool.DruidDataSource
+    # 下面为连接池的补充设置
+    druid:
+      # 初始化大小，最小，最大  
+      initial-size: 5
+      min-idle: 5
+      max-active: 200
+      # 配置获取连接等待超时的时间
+      max-wait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      time-between-eviction-runs-millis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      # 打开PSCache，并且指定每个连接上PSCache的大小
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+      filters: stat,wall,slf4j
+      # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+      connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      # 合并多个DruidDataSource的监控数据
+      use-global-data-source-stat: true
+      filter:
+        # WallFilter 配置
+        wall:
+          enabled: true
+          # 对被认为是攻击的SQL进行LOG.error输出
+          log-violation: true
+          # 对被认为是攻击的SQL抛出SQLException
+          throw-exception: false
+          config:
+            # 是否允许一次执行多条语句
+            multi-statement-allow: true
+      # WebStatFilter配置
+      web-stat-filter:
+        enabled: true
+        url-pattern: '/*'
+        exclusions: '*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*,/druid,/info,/health'
+        session-stat-enable: false
+        # 够监控单个url调用的sql列表
+        profile-enable: true
+      # StatViewServlet配置
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        # 允许清空统计数据
+        reset-enable: true
+        # druid后台用户名/密码
+        login-username: druid
+        login-password: druid
+        # 白名单
+        allow: 
+      # Spring监控配置
+      aop-patterns:
+      - com.geeorange.neptune.auth.service.impl.*
+  # 缓存(方法/自定义/分布式锁) 
+  redis:
+    host: 192.168.31.100
+    port: 6379
+    password: '{cipher}AQBRxab0u2cO7qgbVkoNce3Ra+wJeDS7wxVBz67Riy7FhyJYacZOvYPsGHWkwcRnqqWj78zmeXrHGvM7+LZZp80LGuKkV10giV1da5UQI48j1hi4EsTjUt6G1giWVXnTBFUuPXe/QBev5foxPxMROwRFovOTlRON4pCxps+/DCpUp8jWufHoQA7Tt0dVOCrUIiVPLrRxlztRXWv7T1q9qnMrkBZPDbPuBF/67YiYWFqqxYy0+WgmKL9tJO4LsYG6Bnhkj80OWZMtjUHu4sO9C2hRBbmmAAPO0aASYReLXDDfp/2seSFQ38FDaPxAkzgRaxD0ptZ4ghdq+iuHtS5hNG7nryCGR5FbJQ5cNdEC68VgDxl0eTLAo/CEoXf7HGzHmjA='
+    database: 1
+  # rabbitmq配置信息
+  rabbitmq:
+    host: 192.168.31.100
+    port: 5672
+    username: test
+    password: '{cipher}AQBZ8ZqhbXj6xsVsTfTeiJQMpnunM8H2ly6NBu1L2f6DhnEoBP9fj2o7PXzZCNFDqNRVjsaFuUcNXYbumkk26PtAMqTXuq1nAyPm/+i64TRoFDS2HXVlgsO8oRqKAGnBIZh/TYD3YgPzkFqj3ycsvbvgPTTptL5Hg2ZEdAxxQz+nXXiCD2xiTrxgK/Ubh9ipe2Y31FkD8XqS3Sg3StZIINxg4bcjGAGxQwn08Y+qUhGtyj/NVa9J6d4wAYVprVStg7z/klQhWb80EZf+ukCPniEeNSgMUiCwpFFZ2ITcnI5H7SC6UTdKlKKuUfe80SlkllHvT4qW8VirtlR7Hy27AwQ9y7mdrBlQXMfRgyzGskBR3sjH/wJP8In9Bhcic8VrxJI='
+    virtual-host: /
+         
+# ES日志推送配置
+elasticsearch:
+  enabled: false
+  host: 192.168.0.54
+  port: 9300
+  cluster-name: elasticsearch
+  index: loan
+  pool-size: 6
